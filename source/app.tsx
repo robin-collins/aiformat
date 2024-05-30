@@ -2,8 +2,13 @@ import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import fs from 'fs';
 import path from 'path';
-import { outputXml } from './utils/generateOutput.js';
 import clipboard from 'clipboardy';
+import { generateOutputVERSION, outputXml } from './utils/generateOutput.js';
+import PackageJson from '@npmcli/package-json';
+const pkgJson = await PackageJson.load('./')
+
+let AIFORMAT_VERSION = pkgJson.content.version;
+let GENERATE_OUTPUT_VERSION = generateOutputVERSION;
 
 interface Item {
 	id: string;
@@ -23,13 +28,18 @@ const generateId = (itemPath: string): string => {
 process.stdout.write('\x1Bc');
 
 const App: FC = () => {
-	const [excludedFolders] = useState<string[]>(['node_modules', '.git', 'dist', 'build', 'coverage', 'public']);
+	const [excludedFolders] = useState<string[]>(['node_modules', '.git', 'dist', 'build', 'coverage', ]);
+	const [versionMessage, setVersionMessage] = useState<string | null>(null);
+
 	const [currentItemId, setCurrentItemId] = useState<string | null>(null);
 	const [items, setItems] = useState<Item[]>([]);
 	const [selectedItems, setSelectedItems] = useState<Item[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [message, setMessage] = useState<ReactNode | null>(null)
 
+	useEffect(() => {
+		setVersionMessage(`aiformat v${AIFORMAT_VERSION} generateOutput.ts v${GENERATE_OUTPUT_VERSION}\n`);
+	}, []);
 
 	useInput((input, key) => {
 		if (key.return) {
@@ -317,6 +327,11 @@ const App: FC = () => {
 	return (
 		<Box flexDirection="column" marginTop={2} marginBottom={2}>
 			<Box flexDirection="column" marginBottom={1}>
+					{versionMessage && (
+                    <Text color="yellow">
+                        {versionMessage}
+                    </Text>
+          )}
 				<Text>Select files and folders to include.</Text>
 				<Text>
 					Selected files: <Text color="cyan">{selectedItems.length}</Text>

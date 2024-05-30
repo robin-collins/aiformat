@@ -1,6 +1,6 @@
 {
 	"name": "aiformat",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"license": "MIT",
 	"bin": "dist/cli.js",
 	"type": "module",
@@ -20,6 +20,7 @@
 		"dist"
 	],
 	"dependencies": {
+		"@npmcli/package-json": "^5.1.1",
 		"clipboardy": "^4.0.0",
 		"figures": "^6.1.0",
 		"ink": "^4.1.0",
@@ -28,6 +29,7 @@
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^3.0.1",
+		"@types/npmcli__package-json": "^4.0.4",
 		"@types/react": "^18.0.32",
 		"@vdemedes/prettier-config": "^2.0.1",
 		"ava": "^5.2.0",

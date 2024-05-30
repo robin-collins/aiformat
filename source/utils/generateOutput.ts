@@ -1,5 +1,8 @@
 import fs from 'fs';
 
+// Define version number
+export const generateOutputVERSION = "0.0.1";
+
 interface FileOrFolder {
     id: string;
     name: string;
