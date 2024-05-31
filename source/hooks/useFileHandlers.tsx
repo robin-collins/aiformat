@@ -3,16 +3,19 @@
 import { useState, useEffect } from 'react';
 import fs from 'fs';
 import path from 'path';
+import fastIgnore from 'fast-ignore';
 import { Item } from '../types.js';
 import { EXCLUDED_FOLDERS } from '../constants.js';
 
 /**
  * Custom hook to handle file and folder operations.
  *
- * @returns An object containing the list of items (files and folders) and a function to update the list.
+ * @returns An object containing the list of items (files and folders), a function to update the list, and the .gitignore rules.
  */
 export const useFileHandlers = () => {
     const [items, setItems] = useState<Item[]>([]);
+    const [gitignoreRules, setGitignoreRules] = useState<string[]>([]);
+    const [isGitignorePresent, setIsGitignorePresent] = useState(false);
 
     /**
      * Generates a unique ID for an item based on its path.
@@ -29,9 +32,10 @@ export const useFileHandlers = () => {
      *
      * @param dirPath The path of the directory to load files and folders from.
      * @param level The current level of the directory hierarchy.
+     * @param ignore Function to check if a file/folder should be ignored.
      * @returns An array of items (files and folders) in the directory.
      */
-    const loadFilesAndFolders = (dirPath: string, level: number = 0): Item[] => {
+    const loadFilesAndFolders = (dirPath: string, level: number = 0, ignore: (filePath: string) => boolean): Item[] => {
         const items: Item[] = [];
         const dirItems = fs.readdirSync(dirPath);
         const sortedItems = dirItems.sort((a, b) => {
@@ -47,7 +51,7 @@ export const useFileHandlers = () => {
             const isDirectory = fs.statSync(itemPath).isDirectory();
             const id = generateId(itemPath);
 
-            if (!EXCLUDED_FOLDERS.includes(item)) {
+            if (!EXCLUDED_FOLDERS.includes(item) && !ignore(itemPath)) {
                 const newItem: Item = {
                     id,
                     name: item,
@@ -59,7 +63,7 @@ export const useFileHandlers = () => {
                 };
 
                 if (isDirectory) {
-                    newItem.children = loadFilesAndFolders(itemPath, level + 1);
+                    newItem.children = loadFilesAndFolders(itemPath, level + 1, ignore);
                 }
 
                 items.push(newItem);
@@ -70,9 +74,19 @@ export const useFileHandlers = () => {
     };
 
     useEffect(() => {
-        const items = loadFilesAndFolders(process.cwd());
+        const gitignorePath = path.join(process.cwd(), '.gitignore');
+        let ignore: (filePath: string) => boolean = () => false;
+
+        if (fs.existsSync(gitignorePath)) {
+            const gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
+            ignore = fastIgnore(gitignoreContent);
+            setGitignoreRules(gitignoreContent.split(/\r?\n/).filter(line => line.trim() !== '' && !line.startsWith('#')));
+            setIsGitignorePresent(true);
+        }
+
+        const items = loadFilesAndFolders(process.cwd(), 0, ignore);
         setItems(items);
     }, []);
 
-    return { items, setItems };
+    return { items, setItems, gitignoreRules, isGitignorePresent };
 };

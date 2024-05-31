@@ -10,6 +10,7 @@ import { toggleFolderExpansion, toggleSelection, copyContentsOfFilesAndFolders }
 import { handleInput } from './components/InputHandler.js';
 import { getItemsFromFolder, expandParentFolders } from './utils/itemUtils.js';
 import { Item } from './types.js';
+import { AIFORMAT_VERSION, GENERATE_OUTPUT_VERSION, EXCLUDED_FOLDERS } from './constants.js';
 
 // Clear console
 process.stdout.write('\x1Bc');
@@ -22,7 +23,7 @@ process.stdout.write('\x1Bc');
  */
 const App: FC = () => {
     // State and handlers for managing file items
-    const { items, setItems } = useFileHandlers();
+    const { items, setItems, gitignoreRules, isGitignorePresent } = useFileHandlers();
 
     // State and handlers for managing search functionality
     const { searchQuery, setSearchQuery, filteredItems } = useSearchHandlers(items);
@@ -105,6 +106,20 @@ const App: FC = () => {
     return (
         <Box flexDirection="column" marginTop={2} marginBottom={2}>
             <Box flexDirection="column" marginBottom={1}>
+                <Text>
+                    <Text color="blue">aiformat</Text> version: <Text color="yellow">{AIFORMAT_VERSION}</Text>, <Text color="green">generateOutput</Text> version: <Text color="yellow">{GENERATE_OUTPUT_VERSION}</Text>.
+                </Text>
+                {isGitignorePresent ? (
+                    <Text>
+                        <Text color="redBright">.gitignore present:</Text> <Text color="yellow">[{gitignoreRules.join(', ')}]</Text>
+                    </Text>
+                ) : null}
+                <Text>
+                    default excluded folders:[<Text color="yellow">{EXCLUDED_FOLDERS.join(', ')}</Text>]
+                </Text>
+            </Box>
+
+            <Box flexDirection="column" marginBottom={1}>
                 <Text>Select files and folders to include.</Text>
                 <Text>
                     Selected files: <Text color="cyan">{selectedItems.length}</Text>
@@ -134,4 +149,5 @@ const App: FC = () => {
         </Box>
     );
 };
+
 export default App;
