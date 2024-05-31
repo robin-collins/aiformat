@@ -10,8 +10,8 @@ import { toggleFolderExpansion, toggleSelection, copyContentsOfFilesAndFolders }
 import { handleInput } from './components/InputHandler.js';
 import { getItemsFromFolder, expandParentFolders } from './utils/itemUtils.js';
 import { Item } from './types.js';
-import { AIFORMAT_VERSION, GENERATE_OUTPUT_VERSION, EXCLUDED_FOLDERS } from './constants.js';
-
+import { AIFORMAT_VERSION, EXCLUDED_FOLDERS } from './constants.js';
+import { GENERATE_OUTPUT_VERSION } from './utils/generateOutput.js';
 // Clear console
 process.stdout.write('\x1Bc');
 
