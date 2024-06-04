@@ -2,7 +2,7 @@ import fs from 'fs';
 import { AsciiTree } from 'oo-ascii-tree';
 
 // Define version number
-export const GENERATE_OUTPUT_VERSION = "0.1.0"; // Incremented version number
+export const GENERATE_OUTPUT_VERSION = "0.1.1"; // Incremented version number
 
 interface FileOrFolder {
     id: string;
@@ -115,11 +115,11 @@ export const outputXml = (fileTree: FileOrFolder[]): {
     const content = cleanedFileTree.map(node => generateXml(node)).join('\n\n');
 
     // Generate markdown file list
-    const markdownFileList = `\`\`\`files.txt\n[LAST MODIFIED DATE] ./FILE PATH\n[==============================================================]\n${filePaths.join('\n')}\n\`\`\``;
+    const markdownFileList = `<files-list>\n[LAST MODIFIED DATE] ./FILE PATH\n[==============================================================]\n${filePaths.join('\n')}\n</file-list>`;
 
     // Generate ASCII file tree
     const asciiFileTree = generateAsciiTree(cleanedFileTree);
-    const markdownFileTree = `\`\`\`filetree.txt\n${asciiFileTree}\n\`\`\``;
+    const markdownFileTree = `<file-tree>\n${asciiFileTree}\n</file-tree>`;
 
     return {
         content: `${content}\n\n${markdownFileList}\n\n${markdownFileTree}`,
