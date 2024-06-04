@@ -119,7 +119,7 @@ export const outputXml = (fileTree: FileOrFolder[]): {
 
     // Generate ASCII file tree
     const asciiFileTree = generateAsciiTree(cleanedFileTree);
-    const markdownFileTree = `<file-tree>\n${asciiFileTree}\n</file-tree>`;
+    const markdownFileTree = `<file-tree>\n${asciiFileTree}</file-tree>`;
 
     return {
         content: `${content}\n\n${markdownFileList}\n\n${markdownFileTree}`,
