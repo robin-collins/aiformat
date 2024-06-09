@@ -122,3 +122,19 @@ export const toggleFolderExpansion = (currentItemId: string | null, items: Item[
         return item;
     }));
 };
+
+/**
+ * Selects or deselects all items in the current folder or search query.
+ *
+ * @param {Item[]} items - The array of all items (files and folders).
+ * @param {Item[]} selectedItems - The array of currently selected items.
+ * @param {function(Item[]): void} setSelectedItems - A function to update the selected items.
+ */
+export const toggleSelectAll = (items: Item[], selectedItems: Item[], setSelectedItems: (items: Item[]) => void) => {
+	const allItemsSelected = items.every(item => selectedItems.includes(item));
+	if (allItemsSelected) {
+			setSelectedItems([]);
+	} else {
+			setSelectedItems(items);
+	}
+};

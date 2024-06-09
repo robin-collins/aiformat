@@ -13,6 +13,7 @@ import { Key } from "ink";
  * @param {() => void} toggleFolderExpansion - Function to toggle the expansion of a folder.
  * @param {() => void} toggleSelection - Function to toggle the selection of an item.
  * @param {() => void} copyContentsOfFilesAndFolders - Function to copy the contents of files and folders.
+ * @param {() => void} toggleSelectAll - Function to toggle the selection of all items.
  */
 export const handleInput = (
   input: string,
@@ -22,10 +23,15 @@ export const handleInput = (
   navigateToPreviousItem: () => void,
   toggleFolderExpansion: () => void,
   toggleSelection: () => void,
-  copyContentsOfFilesAndFolders: () => void
+  copyContentsOfFilesAndFolders: () => void,
+	toggleSelectAll: () => void
 ) => {
   if (key.return) {
     copyContentsOfFilesAndFolders();
+    return;
+  }
+  if (input === '*') {
+    toggleSelectAll();
     return;
   }
   if (input) {

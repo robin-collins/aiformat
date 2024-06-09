@@ -6,7 +6,7 @@ import { useFileHandlers } from './hooks/useFileHandlers.js';
 import { useSearchHandlers } from './hooks/useSearchHandlers.js';
 import { renderItems } from './components/ItemRenderer.js';
 import { navigateToNextItem, navigateToPreviousItem } from './components/Navigation.js';
-import { toggleFolderExpansion, toggleSelection, copyContentsOfFilesAndFolders } from './components/Handlers.js';
+import { toggleFolderExpansion, toggleSelection, copyContentsOfFilesAndFolders, toggleSelectAll } from './components/Handlers.js';
 import { handleInput } from './components/InputHandler.js';
 import { getItemsFromFolder, expandParentFolders } from './utils/itemUtils.js';
 import { Item } from './types.js';
@@ -52,7 +52,8 @@ const App: FC = () => {
             () => navigateToPreviousItem(currentItemId, expandedItems, setCurrentItemId),
             () => toggleFolderExpansion(currentItemId, items, setItems),
             () => toggleSelection(currentItemId, items, selectedItems, setSelectedItems),
-            () => copyContentsOfFilesAndFolders(selectedItems, setMessage)
+            () => copyContentsOfFilesAndFolders(selectedItems, setMessage),
+						() => toggleSelectAll(expandedItems, selectedItems, setSelectedItems)
         );
     });
 
@@ -141,6 +142,9 @@ const App: FC = () => {
                 <Text>
                     Use <Text color="green">Tab</Text> to expand/collapse, and{' '}
                     <Text color="green">Enter</Text> to copy selected files.
+                </Text>
+                <Text>
+                    Use <Text color="green">*</Text> to select/deselect all items.
                 </Text>
             </Box>
             <Box marginTop={1}>
