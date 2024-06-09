@@ -5,7 +5,7 @@ import { Text } from 'ink';
 import clipboard from 'clipboardy';
 import { outputXml } from '../utils/generateOutput.js';
 import { Item } from '../types.js';
-import { findItemById, getItemsFromFolder } from '../utils/itemUtils.js';
+import { findItemById, getItemsFromFolder, flattenItems } from '../utils/itemUtils.js';
 
 /**
  * Copies the contents of the selected files and folders to the clipboard and sets a success message.
@@ -124,17 +124,18 @@ export const toggleFolderExpansion = (currentItemId: string | null, items: Item[
 };
 
 /**
- * Selects or deselects all items in the current folder or search query.
+ * Selects or deselects all visible items.
  *
- * @param {Item[]} items - The array of all items (files and folders).
+ * @param {Item[]} items - The array of visible items (files and folders).
  * @param {Item[]} selectedItems - The array of currently selected items.
  * @param {function(Item[]): void} setSelectedItems - A function to update the selected items.
  */
 export const toggleSelectAll = (items: Item[], selectedItems: Item[], setSelectedItems: (items: Item[]) => void) => {
-	const allItemsSelected = items.every(item => selectedItems.includes(item));
+	const flattenedItems = flattenItems(items);
+	const allItemsSelected = flattenedItems.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id));
 	if (allItemsSelected) {
-			setSelectedItems([]);
+			setSelectedItems(selectedItems.filter(item => !flattenedItems.some(flattenedItem => flattenedItem.id === item.id)));
 	} else {
-			setSelectedItems(items);
+			setSelectedItems([...selectedItems, ...flattenedItems.filter(item => !selectedItems.some(selectedItem => selectedItem.id === item.id))]);
 	}
 };
