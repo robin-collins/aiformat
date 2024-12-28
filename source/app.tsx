@@ -1,7 +1,7 @@
 // source/app.tsx
 
 import React, { FC, ReactNode, useEffect, useState } from 'react';
-import { Box, Text, useInput } from 'ink';
+import { Box, Text, useInput, useStdout } from 'ink';
 import { useFileHandlers } from './hooks/useFileHandlers.js';
 import { useSearchHandlers } from './hooks/useSearchHandlers.js';
 import { renderItems } from './components/ItemRenderer.js';
@@ -12,6 +12,7 @@ import { getItemsFromFolder, expandParentFolders } from './utils/itemUtils.js';
 import { Item } from './types.js';
 import { AIFORMAT_VERSION, EXCLUDED_FOLDERS } from './constants.js';
 import { GENERATE_OUTPUT_VERSION } from './utils/generateOutput.js';
+
 // Clear console
 process.stdout.write('\x1Bc');
 
@@ -37,6 +38,14 @@ const App: FC = () => {
     // State for displaying messages to the user
     const [message, setMessage] = useState<ReactNode | null>(null);
 
+    // State for toggling between console and clipboard output
+    const [outputToConsole, setOutputToConsole] = useState<boolean>(false);
+
+    // Hook for writing to stdout
+    const { write } = useStdout();
+
+    const isPiped = !process.stdout.isTTY;
+
     /**
      * Handles user input for navigating and selecting items.
      *
@@ -44,17 +53,26 @@ const App: FC = () => {
      * @param key - The key object containing information about the pressed key.
      */
     useInput((input, key) => {
-        handleInput(
-            input,
-            key,
-            setSearchQuery,
-            () => navigateToNextItem(currentItemId, expandedItems, setCurrentItemId),
-            () => navigateToPreviousItem(currentItemId, expandedItems, setCurrentItemId),
-            () => toggleFolderExpansion(currentItemId, items, setItems),
-            () => toggleSelection(currentItemId, items, selectedItems, setSelectedItems),
-            () => copyContentsOfFilesAndFolders(selectedItems, setMessage),
-						() => toggleSelectAll(expandedItems, selectedItems, setSelectedItems)
-        );
+        if (key.f1) {
+            setOutputToConsole(!outputToConsole);
+            setMessage(
+                <Text color="yellow">
+                    Output mode: {outputToConsole ? 'Clipboard' : 'Console'}
+                </Text>
+            );
+        } else {
+            handleInput(
+                input,
+                key,
+                setSearchQuery,
+                () => navigateToNextItem(currentItemId, expandedItems, setCurrentItemId),
+                () => navigateToPreviousItem(currentItemId, expandedItems, setCurrentItemId),
+                () => toggleFolderExpansion(currentItemId, items, setItems),
+                () => toggleSelection(currentItemId, items, selectedItems, setSelectedItems),
+                () => copyContentsOfFilesAndFolders(selectedItems, setMessage, outputToConsole, write),
+                () => toggleSelectAll(expandedItems, selectedItems, setSelectedItems)
+            );
+        }
     });
 
     /**
@@ -104,6 +122,10 @@ const App: FC = () => {
         }
     }, [searchQuery]);
 
+    if (isPiped) {
+        return null; // Don't render UI when piped
+    }
+
     return (
         <Box flexDirection="column" marginTop={2} marginBottom={2}>
             <Box flexDirection="column" marginBottom={1}>
@@ -141,10 +163,13 @@ const App: FC = () => {
                 </Text>
                 <Text>
                     Use <Text color="green">Tab</Text> to expand/collapse, and{' '}
-                    <Text color="green">Enter</Text> to copy selected files.
+                    <Text color="green">Enter</Text> to {outputToConsole ? 'output' : 'copy'} selected files.
                 </Text>
                 <Text>
                     Use <Text color="green">*</Text> to select/deselect all items.
+                </Text>
+                <Text>
+                    Press <Text color="green">F1</Text> to toggle output mode: {outputToConsole ? 'Console' : 'Clipboard'}
                 </Text>
             </Box>
             <Box marginTop={1}>

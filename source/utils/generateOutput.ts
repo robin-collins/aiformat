@@ -115,14 +115,14 @@ export const outputXml = (fileTree: FileOrFolder[]): {
     const content = cleanedFileTree.map(node => generateXml(node)).join('\n\n');
 
     // Generate markdown file list
-    const markdownFileList = `<files-list>\n[LAST MODIFIED DATE] ./FILE PATH\n[==============================================================]\n${filePaths.join('\n')}\n</file-list>`;
+    // const markdownFileList = `<files-list>\n[LAST MODIFIED DATE] ./FILE PATH\n[==============================================================]\n${filePaths.join('\n')}\n</file-list>`;
 
     // Generate ASCII file tree
     const asciiFileTree = generateAsciiTree(cleanedFileTree);
     const markdownFileTree = `<file-tree>\n${asciiFileTree}</file-tree>`;
 
     return {
-        content: `${content}\n\n${markdownFileList}\n\n${markdownFileTree}`,
+        content: `${content}\n\n${markdownFileTree}`,
         fileCount: cleanedFileTree.reduce((acc, node) => acc + countFiles(node), 0),
         filePaths,
     };

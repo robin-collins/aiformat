@@ -8,20 +8,32 @@ import { Item } from '../types.js';
 import { findItemById, getItemsFromFolder, flattenItems } from '../utils/itemUtils.js';
 
 /**
- * Copies the contents of the selected files and folders to the clipboard and sets a success message.
+ * Copies the contents of the selected files and folders to the clipboard or outputs to console and sets a success message.
  *
- * @param {Item[]} selectedItems - An array of selected items (files and folders) to be copied.
+ * @param {Item[]} selectedItems - An array of selected items (files and folders) to be copied or output.
  * @param {function(ReactNode): void} setMessage - A function to set the message to be displayed.
+ * @param {boolean} outputToConsole - A flag indicating whether to output to console or clipboard.
+ * @param {function(string): boolean} write - A function to write to stdout.
  */
-export const copyContentsOfFilesAndFolders = (selectedItems: Item[], setMessage: (message: ReactNode) => void) => {
+export const copyContentsOfFilesAndFolders = (
+    selectedItems: Item[],
+    setMessage: (message: ReactNode) => void,
+    outputToConsole: boolean,
+    write: (data: string) => boolean
+) => {
     const files = outputXml(selectedItems);
-    clipboard.writeSync(files.content);
-    setMessage(
-        <Text color="white">✨ Successfully copied <Text color="cyan">{files.fileCount}</Text> file{files.fileCount > 1 && "s"} to clipboard</Text>
-    );
-    setTimeout(() => {
-        process.exit(0);
-    }, 300);
+    if (outputToConsole) {
+        write(files.content);
+        setMessage(
+            <Text color="white">✨ Successfully output <Text color="cyan">{files.fileCount}</Text> file{files.fileCount > 1 && "s"} to console</Text>
+        );
+    } else {
+        clipboard.writeSync(files.content);
+        setMessage(
+            <Text color="white">✨ Successfully copied <Text color="cyan">{files.fileCount}</Text> file{files.fileCount > 1 && "s"} to clipboard</Text>
+        );
+    }
+    // Removed the automatic exit
 };
 
 /**
@@ -131,11 +143,11 @@ export const toggleFolderExpansion = (currentItemId: string | null, items: Item[
  * @param {function(Item[]): void} setSelectedItems - A function to update the selected items.
  */
 export const toggleSelectAll = (items: Item[], selectedItems: Item[], setSelectedItems: (items: Item[]) => void) => {
-	const flattenedItems = flattenItems(items);
-	const allItemsSelected = flattenedItems.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id));
-	if (allItemsSelected) {
-			setSelectedItems(selectedItems.filter(item => !flattenedItems.some(flattenedItem => flattenedItem.id === item.id)));
-	} else {
-			setSelectedItems([...selectedItems, ...flattenedItems.filter(item => !selectedItems.some(selectedItem => selectedItem.id === item.id))]);
-	}
+    const flattenedItems = flattenItems(items);
+    const allItemsSelected = flattenedItems.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id));
+    if (allItemsSelected) {
+        setSelectedItems(selectedItems.filter(item => !flattenedItems.some(flattenedItem => flattenedItem.id === item.id)));
+    } else {
+        setSelectedItems([...selectedItems, ...flattenedItems.filter(item => !selectedItems.some(selectedItem => selectedItem.id === item.id))]);
+    }
 };
