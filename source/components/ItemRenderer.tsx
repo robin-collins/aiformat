@@ -27,10 +27,10 @@ export const renderItems = (
 						item.id === currentItemId
 							? 'green'
 							: selectedItems.find(
-									(selectedItem: Item) => selectedItem.id === item.id,
-							  )
-							? 'cyan'
-							: 'white'
+										(selectedItem: Item) => selectedItem.id === item.id,
+								  )
+								? 'cyan'
+								: 'white'
 					}
 				>
 					{selectedItems.find(
