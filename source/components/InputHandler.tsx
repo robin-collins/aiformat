@@ -1,6 +1,6 @@
 // source/components/InputHandler.tsx
 
-import { Key } from "ink";
+import {Key} from 'ink';
 
 /**
  * Handles various input events and performs corresponding actions.
@@ -15,35 +15,35 @@ import { Key } from "ink";
  * @param {() => void} copyContentsOfFilesAndFolders - Function to copy the contents of files and folders.
  */
 export const handleInput = (
-  input: string,
-  key: Key,
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
+	input: string,
+	key: Key,
+	setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 	navigateToNextItem: () => void,
-  navigateToPreviousItem: () => void,
-  toggleFolderExpansion: () => void,
-  toggleSelection: () => void,
-  copyContentsOfFilesAndFolders: () => void
+	navigateToPreviousItem: () => void,
+	toggleFolderExpansion: () => void,
+	toggleSelection: () => void,
+	copyContentsOfFilesAndFolders: () => void,
 ) => {
-  if (key.return) {
-    copyContentsOfFilesAndFolders();
-    return;
-  }
-  if (input) {
-    setSearchQuery((prev) => prev + input);
-  }
-  if (key.backspace || key.delete) {
-    setSearchQuery((prev) => prev.slice(0, -1));
-  }
-  if (key.downArrow) {
-    navigateToNextItem();
-  }
-  if (key.upArrow) {
-    navigateToPreviousItem();
-  }
-  if (key.tab) {
-    toggleFolderExpansion();
-  }
-  if (key.leftArrow || key.rightArrow) {
-    toggleSelection();
-  }
+	if (key.return) {
+		copyContentsOfFilesAndFolders();
+		return;
+	}
+	if (input) {
+		setSearchQuery(prev => prev + input);
+	}
+	if (key.backspace || key.delete) {
+		setSearchQuery(prev => prev.slice(0, -1));
+	}
+	if (key.downArrow) {
+		navigateToNextItem();
+	}
+	if (key.upArrow) {
+		navigateToPreviousItem();
+	}
+	if (key.tab) {
+		toggleFolderExpansion();
+	}
+	if (key.leftArrow || key.rightArrow) {
+		toggleSelection();
+	}
 };

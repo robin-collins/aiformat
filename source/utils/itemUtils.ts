@@ -1,6 +1,6 @@
 // source/utils/itemUtils.ts
 
-import { Item } from '../types.js';
+import {Item} from '../types.js';
 
 /**
  * Recursively retrieves all items within a given folder.
@@ -9,15 +9,15 @@ import { Item } from '../types.js';
  * @returns {Item[]} - An array of all items within the given folder and its subfolders.
  */
 export const getItemsFromFolder = (folder: Item): Item[] => {
-    const items: Item[] = [];
-    const traverseItems = (item: Item) => {
-        items.push(item);
-        if (item.isDirectory) {
-            item.children.forEach(traverseItems);
-        }
-    };
-    traverseItems(folder);
-    return items;
+	const items: Item[] = [];
+	const traverseItems = (item: Item) => {
+		items.push(item);
+		if (item.isDirectory) {
+			item.children.forEach(traverseItems);
+		}
+	};
+	traverseItems(folder);
+	return items;
 };
 
 /**
@@ -28,19 +28,22 @@ export const getItemsFromFolder = (folder: Item): Item[] => {
  * @param {Item[]} items - The list of items to search in.
  * @returns {Item | undefined} - The found item, or undefined if not found.
  */
-export const findItemByIdInFilteredItems = (itemId: string, items: Item[]): Item | undefined => {
-    for (const item of items) {
-        if (item.id === itemId) {
-            return item;
-        }
-        if (item.isDirectory && item.isExpanded) {
-            const foundItem = findItemByIdInFilteredItems(itemId, item.children);
-            if (foundItem) {
-                return foundItem;
-            }
-        }
-    }
-    return undefined;
+export const findItemByIdInFilteredItems = (
+	itemId: string,
+	items: Item[],
+): Item | undefined => {
+	for (const item of items) {
+		if (item.id === itemId) {
+			return item;
+		}
+		if (item.isDirectory && item.isExpanded) {
+			const foundItem = findItemByIdInFilteredItems(itemId, item.children);
+			if (foundItem) {
+				return foundItem;
+			}
+		}
+	}
+	return undefined;
 };
 
 /**
@@ -51,19 +54,22 @@ export const findItemByIdInFilteredItems = (itemId: string, items: Item[]): Item
  * @param {Item[]} items - The list of items to search in.
  * @returns {Item | undefined} - The found item, or undefined if not found.
  */
-export const findItemById = (itemId: string, items: Item[]): Item | undefined => {
-    for (const item of items) {
-        if (item.id === itemId) {
-            return item;
-        }
-        if (item.isDirectory) {
-            const foundItem = findItemById(itemId, item.children);
-            if (foundItem) {
-                return foundItem;
-            }
-        }
-    }
-    return undefined;
+export const findItemById = (
+	itemId: string,
+	items: Item[],
+): Item | undefined => {
+	for (const item of items) {
+		if (item.id === itemId) {
+			return item;
+		}
+		if (item.isDirectory) {
+			const foundItem = findItemById(itemId, item.children);
+			if (foundItem) {
+				return foundItem;
+			}
+		}
+	}
+	return undefined;
 };
 
 /**
@@ -73,19 +79,19 @@ export const findItemById = (itemId: string, items: Item[]): Item | undefined =>
  * @returns {Item[]} - The flattened array of items.
  */
 export const flattenItems = (items: Item[]): Item[] => {
-    const flattenedItems: Item[] = [];
+	const flattenedItems: Item[] = [];
 
-    const traverseItems = (items: Item[]) => {
-        for (const item of items) {
-            flattenedItems.push(item);
-            if (item.isDirectory && item.isExpanded) {
-                traverseItems(item.children);
-            }
-        }
-    };
+	const traverseItems = (items: Item[]) => {
+		for (const item of items) {
+			flattenedItems.push(item);
+			if (item.isDirectory && item.isExpanded) {
+				traverseItems(item.children);
+			}
+		}
+	};
 
-    traverseItems(items);
-    return flattenedItems;
+	traverseItems(items);
+	return flattenedItems;
 };
 
 /**
@@ -96,13 +102,17 @@ export const flattenItems = (items: Item[]): Item[] => {
  * @returns {Item[]} - The modified list of items with the parent folders of the given item expanded.
  */
 export const expandParentFolders = (item: Item, items: Item[]): Item[] => {
-    return items.map((i: Item) => {
-        if (i.id === item.id) {
-            return { ...i, isExpanded: true };
-        }
-        if (i.isDirectory && item.path.startsWith(i.path)) {
-            return { ...i, isExpanded: true, children: expandParentFolders(item, i.children) };
-        }
-        return i;
-    });
+	return items.map((i: Item) => {
+		if (i.id === item.id) {
+			return {...i, isExpanded: true};
+		}
+		if (i.isDirectory && item.path.startsWith(i.path)) {
+			return {
+				...i,
+				isExpanded: true,
+				children: expandParentFolders(item, i.children),
+			};
+		}
+		return i;
+	});
 };

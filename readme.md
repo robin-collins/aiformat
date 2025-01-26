@@ -10,21 +10,21 @@ This cli tool is built using [Ink](https://github.com/vadimdemedes/ink).
 
 ## Updates
 
-### **Mar 18 2024:**  Folder navigation support
+### **Mar 18 2024:** Folder navigation support
 
-* Added searching inside deeply nested files.
-* Added the ability to expand/collapse folders with the `Tab` key.
-* Added emojis to differentiate between folders (🗂️) and files (📄).
-* Full code re-write, including ID based navigation.
+- Added searching inside deeply nested files.
+- Added the ability to expand/collapse folders with the `Tab` key.
+- Added emojis to differentiate between folders (🗂️) and files (📄).
+- Full code re-write, including ID based navigation.
 
 ## Features
 
-* Interactively select files and folders from the current directory
-* Filter files and folders using a search query
-* Navigate through the list using arrow keys
-* Select/deselect items using left/right arrow keys
-* Convert selected files and folders into a format compatible with Claude
-* Automatically copy the formatted output to the clipboard
+- Interactively select files and folders from the current directory
+- Filter files and folders using a search query
+- Navigate through the list using arrow keys
+- Select/deselect items using left/right arrow keys
+- Convert selected files and folders into a format compatible with Claude
+- Automatically copy the formatted output to the clipboard
 
 ## Install
 
